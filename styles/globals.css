@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -24,4 +24,9 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-feature-settings: "ss01", "ss03" 0, "cv11" 0;
 }
