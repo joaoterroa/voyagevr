@@ -1,0 +1,16 @@
+/* styles.css */
+.light-theme {
+    --bg-color: #f8f9fa;
+    --text-color: #121212;
+    --border-color: gray-200;
+    --hover-bg-color: gray-200;
+    --hover-text-color: #121212;
+}
+
+.dark-theme {
+    --bg-color: #121212;
+    --text-color: #f8f9fa;
+    --border-color: slate-700;
+    --hover-bg-color: slate-700;
+    --hover-text-color: f8f9fa;
+}

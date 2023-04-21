@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const { Tokens } = require('./.mirrorful/theme_cjs.js')
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -7,6 +8,7 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: Tokens.colors,
       fontFamily: {
         inter: ["Inter", "sans-serif"],
       },

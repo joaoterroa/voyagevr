@@ -1,7 +1,19 @@
+import { useEffect, useRef } from "react";
 import Script from "next/script";
 import YouTube from "react-youtube";
 
-const VideoPlayer = ({ videoId }) => {
+const VideoPlayer = ({ videoId, currentTime }) => {
+  const playerRef = useRef(null);
+
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(currentTime);
+    }
+  }, [currentTime]);
+
+  const onReady = (event) => {
+    playerRef.current = event.target;
+  };
   return (
     <>
       <Script src="https://www.youtube.com/player_api" strategy="lazyOnload" />
@@ -15,9 +27,9 @@ const VideoPlayer = ({ videoId }) => {
             // Set playerVars as needed (e.g. autoplay, mute, etc.)
           },
         }}
+        onReady={onReady}
       />
     </>
   );
 };
-
 export default VideoPlayer;

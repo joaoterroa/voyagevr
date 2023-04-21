@@ -4,35 +4,26 @@ const destinations = [
     name: "Lisbon",
     description: "Make your way through the cobblestone streets of Lisbon.",
     image: "images/lisbon.jpg",
-    introductoryVideo: "8Sucd2UZHiM",
-    images: [
-      "images/lisbon/lisbon1.jpg",
-      "images/lisbon/lisbon2.jpg",
-      "images/lisbon/lisbon3.jpg",
+    introductoryVideo: "N8bHCHl8X_0",
+    timeStamps: [
+      80, 200, 720
     ],
-    landmarks: ["Portuguese Riviera", "Sintra", "Lisbon"],
+    images: [
+      "images/lisbon/torre_belem.jpg",
+      "images/lisbon/maat.jpg",
+      "images/lisbon/sintra.jpg",
+    ],
+    landmarks: ["Torre de Belém", "Maat", "Sintra"],
     culture: ["Portuguese Cuisine", "Fado", "Portuguese Wine"],
     cuisine: ["Bacalhau", "Francesinha", "Pastel de Nata"],
     history: ["Portuguese Empire", "Age of Discovery", "Catholic Monarchy"],
-    nearbyAttractions: [
-      {
-        id: 2,
-        name: "Sintra",
-        image: "images/lisbon/sintra.jpg",
-      },
-      {
-        id: 3,
-        name: "Portuguese Riviera",
-        image: "images/lisbon/riviera.jpg",
-      },
-    ],
   },
   {
     id: 2,
     name: "Barcelona",
     description: "Explore the beautiful city of Barcelona.",
     image: "images/barcelona.jpg",
-    introductoryVideo: "8Sucd2UZHiM",
+    introductoryVideo: "s1XoYkn3osE",
     images: [
       "images/barcelona/barcelona1.jpg",
       "images/barcelona/barcelona2.jpg",
