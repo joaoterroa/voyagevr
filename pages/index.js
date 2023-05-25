@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { AiOutlineMenu } from "react-icons/ai";
 import { RiCloseFill } from "react-icons/ri";
 import Link from "next/link";
-import styles from "../styles/Sidebar.module.css";
 
 export default function Home() {
     const [destinationList, setDestinationList] = useState([]);

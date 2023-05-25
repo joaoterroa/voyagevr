@@ -8,6 +8,7 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import PointOfInterestCard from "@/components/PointOfInterestCard";
 
 const OpenStreetMap = dynamic(() => import("@/components/OpenStreetMap"), {
     ssr: false,
@@ -235,45 +236,20 @@ export default function DestinationPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-5 mb-4">
                             {destination.images.map((image, index) => (
-                                <motion.div
+                                <PointOfInterestCard
                                     key={index}
-                                    className={`relative overflow-hidden ${
-                                        index === activeCard
-                                            ? "highlight-class"
-                                            : ""
-                                    }`}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    whileHover={{
-                                        scale: 1.05,
-                                        boxShadow:
-                                            "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                    }}
-                                    transition={{ duration: 0.2 }}
-                                >
-                                    <div className="transform transition duration-500 ease-in-out hover:scale-105">
-                                        <Image
-                                            src={"/" + image}
-                                            alt={`${destination.name} - ${index}`}
-                                            className="w-full h-48 object-cover rounded-lg"
-                                            width={500}
-                                            height={500}
-                                        />
-                                    </div>
-                                    <div className="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
-                                    <div
-                                        className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl uppercase z-10"
-                                        onClick={() =>
-                                            handleImageClick(timeStamps[index])
-                                        }
-                                    >
-                                        {destination.landmarks[index]}
-                                    </div>
-                                </motion.div>
+                                    image={image}
+                                    name={destination.landmarks[index]}
+                                    index={index}
+                                    onClick={() =>
+                                        handleImageClick(timeStamps[index])
+                                    }
+                                    activeCard={activeCard}
+                                />
                             ))}
                         </div>
 
-                        <motion.div
+                        {/* <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
@@ -325,8 +301,7 @@ export default function DestinationPage() {
                                 </h3>
                                 <div className="text-xl">{activeItemValue}</div>
                             </div>
-                        )}
-                        {/* span the two images along the width of the div */}
+                        )} */}
                         <section className="mt-8">
                             <Link href="/">
                                 <button
@@ -358,23 +333,23 @@ export default function DestinationPage() {
     );
 }
 
-function CategoryCard({ title, items, onItemClick, activeItemKey }) {
-    return (
-        <div className="border rounded-md p-4">
-            <h2 className="font-semibold mb-4">{title}</h2>
-            <ul className="space-y-2 ">
-                {Object.keys(items).map((key, index) => (
-                    <li
-                        key={index}
-                        className={`cursor-pointer ${
-                            activeItemKey === key ? "font-bold" : ""
-                        }`}
-                        onClick={() => onItemClick(key, items[key])}
-                    >
-                        - {key}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-}
+// function CategoryCard({ title, items, onItemClick, activeItemKey }) {
+//     return (
+//         <div className="border rounded-md p-4">
+//             <h2 className="font-semibold mb-4">{title}</h2>
+//             <ul className="space-y-2 ">
+//                 {Object.keys(items).map((key, index) => (
+//                     <li
+//                         key={index}
+//                         className={`cursor-pointer ${
+//                             activeItemKey === key ? "font-bold" : ""
+//                         }`}
+//                         onClick={() => onItemClick(key, items[key])}
+//                     >
+//                         - {key}
+//                     </li>
+//                 ))}
+//             </ul>
+//         </div>
+//     );
+// }
