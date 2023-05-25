@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import Script from "next/script";
 import YouTube from "react-youtube";
 
-const VideoPlayer = ({ videoId, currentTime }) => {
+const VideoPlayer = ({ videoId, currentTime, onTimeUpdate }) => {
   const playerRef = useRef(null);
 
   useEffect(() => {
@@ -14,6 +14,7 @@ const VideoPlayer = ({ videoId, currentTime }) => {
   const onReady = (event) => {
     playerRef.current = event.target;
   };
+
   return (
     <>
       <Script src="https://www.youtube.com/player_api" strategy="lazyOnload" />
@@ -28,6 +29,11 @@ const VideoPlayer = ({ videoId, currentTime }) => {
           },
         }}
         onReady={onReady}
+        onTimeUpdate={(e) => {
+          if (props.onTimeUpdate) {
+            props.onTimeUpdate(e.target.currentTime);
+          }
+        }}
       />
     </>
   );

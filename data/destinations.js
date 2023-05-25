@@ -8,12 +8,14 @@ const destinations = [
     image: "images/lisbon.jpg",
     introductoryVideo: "N8bHCHl8X_0",
     timeStamps: [80, 200, 720],
+    intervals: { 1: [80, 90] },
     images: [
       "images/lisbon/torre_belem.jpg",
       "images/lisbon/maat.jpg",
       "images/lisbon/sintra.jpg",
     ],
     landmarks: ["Torre de Belém", "Maat", "Sintra"],
+    annotations: [(500, 500), (500, 500), (500, 500)],
     culture: {
       "Portuguese Cuisine":
         "Portuguese cuisine is a rich and diverse culinary tradition that has been influenced by the country's long history of seafaring and exploration. With an emphasis on fresh seafood, flavorful spices, and simple but hearty ingredients, Portuguese dishes often combine the best of land and sea. At the heart of this culinary culture are traditional recipes passed down through generations, which showcase the country's Mediterranean and Atlantic influences. One of the most famous dishes is Bacalhau, which is salt cod that has been dried and preserved. It can be prepared in many ways, such as grilled, boiled, or baked, and is often served with potatoes and vegetables. Another beloved Portuguese dish is the Francesinha, a sandwich filled with cured meats and cheese, topped with a rich tomato and beer sauce. And of course, no discussion of Portuguese cuisine would be complete without mentioning the sweet and creamy Pastel de Nata, a custard tart that is famous all over the world.",
