@@ -35,13 +35,10 @@ export default function Home() {
         localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
     };
 
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
     return (
         <>
             <Head>
-                <title>VoyageVR: Immerse Yourself in the World</title>
+                <title>VoyageVR</title>
             </Head>
 
             <div

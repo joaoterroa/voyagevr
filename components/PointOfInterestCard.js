@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, useAnimation } from "framer-motion";
 
-const PointOfInterestCard = ({ image, name, index, onClick, activeCard }) => {
+const PointOfInterestCard = ({
+    image,
+    name,
+    index,
+    onClick,
+    highlightFoodCard,
+    highlightMonCard,
+}) => {
     const [isHovered, setIsHovered] = useState(false);
     const controls = useAnimation();
 
@@ -25,9 +32,14 @@ const PointOfInterestCard = ({ image, name, index, onClick, activeCard }) => {
     return (
         <motion.div
             key={index}
-            className={`relative overflow-hidden ${
-                index === activeCard ? "highlight-class" : ""
+            className={`relative overflow-hidden border-4 border-transparent  ${
+                index === highlightMonCard
+                    ? "focus-class"
+                    : index === highlightFoodCard
+                    ? "focus-class"
+                    : ""
             }`}
+            style={{ borderRadius: "0.7rem" }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -44,7 +56,7 @@ const PointOfInterestCard = ({ image, name, index, onClick, activeCard }) => {
             </div>
             <div className="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
             <div
-                className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl uppercase z-10"
+                className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl text-center p-4"
                 onClick={onClick}
             >
                 {name}

@@ -9,12 +9,17 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import PointOfInterestCard from "@/components/PointOfInterestCard";
+import styles from "@/styles/DestinationPage.module.css";
+import { fetchWeatherData } from "../utils";
+import { Document, Page, pdfjs } from "react-pdf";
+import React from "react";
+import ReactResizeDetector from "react-resize-detector";
 
 const OpenStreetMap = dynamic(() => import("@/components/OpenStreetMap"), {
     ssr: false,
 });
 
-import { fetchWeatherData } from "../utils";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export default function DestinationPage() {
     const router = useRouter();
@@ -23,6 +28,92 @@ export default function DestinationPage() {
     const destination = destinations.find((dest) => dest.name === decodedName);
     const [currentTime, setCurrentTime] = useState(0);
     const [darkMode, setDarkMode] = useState(false);
+    const [activeTab, setActiveTab] = useState("Monuments");
+    const [activeParagraphFood, setActiveParagraphFood] = useState(null);
+    const [activeParagraphHistory, setActiveParagraphHistory] = useState(null);
+    const [activeImage, setActiveImage] = useState(null);
+
+    const [numPages, setNumPages] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tableOfContents, setTableOfContents] = useState({
+        "Cover Page": {
+            page: 1,
+        },
+        "Table of Contents": {
+            page: 2,
+        },
+        "Your guide to Lisbon": {
+            page: 3,
+            subsections: {
+                "Lisbon Description": {
+                    page: 4,
+                },
+            },
+        },
+        "Know about Lisbon": {
+            page: 5,
+            subsections: {
+                "Lisbon Districts": {
+                    page: 6,
+                },
+            },
+        },
+        "Public Transport": {
+            page: 7,
+        },
+        "Going Out": {
+            page: 9,
+            subsections: {
+                "Food & Drinks": {
+                    page: 10,
+                },
+                "Rooftops & Bars": {
+                    page: 11,
+                },
+                "Clubs & Nightclubs": {
+                    page: 12,
+                },
+            },
+        },
+        "Lisbon Museums": {
+            page: 13,
+        },
+        "Lisbon Monuments": {
+            page: 14,
+        },
+        "Lisbon Tours": {
+            page: 15,
+        },
+        "Contact Information": {
+            page: 16,
+        },
+    });
+    const [scale, setScale] = useState(1);
+    const [activeSection, setActiveSection] = useState(null);
+    const [activeSubsection, setActiveSubsection] = useState(null);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const windowWidth = 1.57 * window.innerWidth;
+
+            // Calculate new scale here. This is a very simple example,
+            // you may need a more complex calculation based on your needs.
+            // In this example, the larger the window, the larger the scale.
+            const newScale = windowWidth / 2000;
+
+            setScale(newScale);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        // Call the function to set the initial scale.
+        handleResize();
+
+        return () => {
+            // Clean up the event listener when the component unmounts.
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         // Check for user's preference in localStorage
@@ -64,8 +155,47 @@ export default function DestinationPage() {
         }
     };
 
+    // Function to navigate to the next page
+    const nextPage = () => {
+        if (currentPage < numPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    // Function to navigate to the previous page
+    const previousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
     const [weatherData, setWeatherData] = useState(null);
-    const [activeCard, setActiveCard] = useState(null);
+    const [highlightMonCard, setHighlightMonCard] = useState(null);
+    const [highlightFoodCard, setHighlightFoodCard] = useState(null);
+
+    const updateCard = (timestamp) => {
+        // Monuments
+        if (timestamp >= 80 && timestamp < 93) {
+            setHighlightMonCard(0);
+        } else if (timestamp >= 195 && timestamp < 217) {
+            setHighlightMonCard(1);
+        } else if (timestamp >= 720 && timestamp < 772) {
+            setHighlightMonCard(2);
+        } else {
+            setHighlightMonCard(null);
+        }
+
+        // Food
+        if (timestamp >= 252 && timestamp < 267) {
+            setHighlightFoodCard(0);
+        } else if (timestamp >= 720 && timestamp < 772) {
+            setHighlightFoodCard(1);
+        } else if (timestamp >= 180 && timestamp < 195) {
+            setHighlightFoodCard(2);
+        } else {
+            setHighlightFoodCard(null);
+        }
+    };
 
     useEffect(() => {
         // Fetch weather data when the component mounts
@@ -101,25 +231,37 @@ export default function DestinationPage() {
 
     const timeStamps = destination.timeStamps;
 
+    const timeStampsCuisine = destination.timeStampsCuisine;
+
+    const isVideoTab = ["Monuments", "Food"].includes(activeTab);
+
     return (
         <>
             <Head>
                 <title>{destination.name}</title>
             </Head>
             <div
-                className={
+                className={`${
                     darkMode
-                        ? "bg-neutral-900 text-neutral-100 "
+                        ? "bg-neutral-900 text-neutral-100"
                         : "bg-neutral-100 text-neutral-900"
-                }
+                }`}
+                style={{ minHeight: "100vh" }}
             >
-                <nav className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-6">
-                    <div className="container mx-auto px-4 flex justify-between items-center">
+                <motion.nav
+                    className="bg-no-repeat bg-center bg-cover flex items-center py-12"
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)), url("https://unsplash.com/photos/LErQct1aBD4/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTR8fGxpc2JvbnxlbnwwfDB8fHwxNjg3OTczMTA5fDA&force=true")`,
+                    }}
+                >
+                    <div className="container mx-auto px-4 flex justify-between">
                         <div>
-                            <h1 className="text-4xl font-bold">VoyageVR</h1>
-                            <p className="text-xl">
-                                Explore the globe from the comfort of your home
-                            </p>
+                            <h1 className="text-5xl font-bold text-white">
+                                {destination.name}
+                            </h1>
                         </div>
                         <button
                             onClick={toggleDarkMode}
@@ -132,201 +274,492 @@ export default function DestinationPage() {
                             )}
                         </button>
                     </div>
-                </nav>
+                </motion.nav>
+                <motion.nav className="py-6">
+                    <div
+                        className="container mx-auto px-4"
+                        // style={{ maxHeight: "670px" }}
+                    >
+                        <div className="flex justify-center gap-4 flex-wrap md:flex-nowrap">
+                            {["Monuments", "Food", "History", "About"].map(
+                                (tab) => (
+                                    <button
+                                        key={tab}
+                                        className={`${styles.tab} ${
+                                            activeTab === tab && styles.active
+                                        } ${
+                                            darkMode
+                                                ? "text-white hover:bg-neutral-700"
+                                                : "text-black hover:bg-neutral-300 hover:text-black"
+                                        }`}
+                                        onClick={() => {
+                                            setActiveTab(tab);
+                                            if (tab === "Food") {
+                                                setHighlightMonCard(null);
+                                            } else if (tab === "Monuments") {
+                                                setHighlightFoodCard(null);
+                                            }
+                                        }}
+                                    >
+                                        {tab}
+                                    </button>
+                                )
+                            )}
+                        </div>
+                    </div>
+                </motion.nav>
+
                 <div className="">
-                    <div className="container mx-auto p-4 ">
-                        <h1 className="text-4xl font-bold mb-4">
-                            {destination.name}
-                        </h1>
-                        <p className="text-xl mb-8">
-                            {destination.description}
-                        </p>
-                        <div className="flex space-x-4 mb-6 gap-4">
-                            {/* buttons for social media sharing */}
-                            {/* Facebook Share Button */}
-                            <a
-                                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                                    currentUrl
-                                )}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="focus:outline-none"
+                    <main className="container mx-auto p-4">
+                        <div className="flex flex-col md:flex-row md:space-x-4 gap-24 flex-row items-center mb-4">
+                            <div
+                                className={
+                                    isVideoTab ? "transform w-1/2" : "hidden"
+                                }
                             >
-                                <button className="inline-flex items-center space-x-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        fill="currentColor"
-                                        class="bi bi-facebook"
-                                        viewBox="0 0 16 16"
-                                    >
-                                        <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
-                                    </svg>
-                                </button>
-                            </a>
-
-                            {/* Twitter Share Button */}
-                            <a
-                                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                                    currentUrl
-                                )}&text=Check%20out%20this%20amazing%20virtual%20tour%20of%20${encodeURIComponent(
-                                    destination.name
-                                )}%20on%20VoyageVR!&hashtags=VoyageVR,VirtualTravel`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="focus:outline-none"
-                            >
-                                <button className="inline-flex items-center space-x-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        fill="currentColor"
-                                        class="bi bi-twitter"
-                                        viewBox="0 0 16 16"
-                                    >
-                                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z" />
-                                    </svg>
-                                </button>
-                            </a>
-
-                            {/* Email Share Button */}
-                            <a
-                                href={`mailto:?subject=Check%20out%20this%20amazing%20virtual%20tour%20of%20${encodeURIComponent(
-                                    destination.name
-                                )}%20on%20VoyageVR!&body=I%20found%20this%20amazing%20virtual%20tour%20of%20${encodeURIComponent(
-                                    destination.name
-                                )}%20on%20VoyageVR%20and%20thought%20you%20might%20like%20it%20too!%20Here's%20the%20link:%20${encodeURIComponent(
-                                    currentUrl
-                                )}`}
-                                className="focus:outline-none"
-                            >
-                                <button className="inline-flex items-center space-x-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        fill="currentColor"
-                                        class="bi bi-envelope-fill"
-                                        viewBox="0 0 16 16"
-                                    >
-                                        <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z" />
-                                    </svg>
-                                </button>
-                            </a>
-                        </div>
-                        <div className=" mb-4 hover:shadow-lg transform hover:scale-105 transition duration-200 ease-in-out w-full">
-                            <VideoPlayer
-                                videoId={destination.introductoryVideo}
-                                currentTime={currentTime}
-                                onTimeUpdate={(time) => {
-                                    // Update the active card based on the current time
-                                    if (time >= 80 && time <= 90) {
-                                        setActiveCard(0); // highlight the first card
-                                    } else {
-                                        setActiveCard(null); // no card is highlighted
-                                    }
-                                }}
-                            />
-                        </div>
-                        <h2 className="text-2xl font-semibold mb-4 mt-8">
-                            Points of Interest
-                        </h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-5 mb-4">
-                            {destination.images.map((image, index) => (
-                                <PointOfInterestCard
-                                    key={index}
-                                    image={image}
-                                    name={destination.landmarks[index]}
-                                    index={index}
-                                    onClick={() =>
-                                        handleImageClick(timeStamps[index])
-                                    }
-                                    activeCard={activeCard}
+                                <VideoPlayer
+                                    videoId={destination.introductoryVideo}
+                                    currentTime={currentTime}
+                                    onTimeUpdate={updateCard}
                                 />
-                            ))}
+                            </div>
+
+                            {isVideoTab && (
+                                <div className="w-1/2 overflow-hidden">
+                                    {activeTab === "Monuments" && (
+                                        <>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                                {destination.images.map(
+                                                    (image, index) => (
+                                                        <PointOfInterestCard
+                                                            key={index}
+                                                            image={image}
+                                                            name={
+                                                                destination
+                                                                    .landmarks[
+                                                                    index
+                                                                ]
+                                                            }
+                                                            index={index}
+                                                            onClick={() =>
+                                                                handleImageClick(
+                                                                    timeStamps[
+                                                                        index
+                                                                    ]
+                                                                )
+                                                            }
+                                                            highlightMonCard={
+                                                                highlightMonCard
+                                                            }
+                                                        />
+                                                    )
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {activeTab === "Food" && (
+                                        <>
+                                            {/* <p className="text-center text-2xl font-semibold mb-4">
+                                                Cuisine
+                                            </p> */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 center">
+                                                {destination.imagesCuisine.map(
+                                                    (image, index) => {
+                                                        // const isHighlighted =
+                                                        //     highlightCard ===
+                                                        //     index;
+                                                        const cuisineName =
+                                                            Object.keys(
+                                                                cuisine
+                                                            )[index];
+                                                        const cuisineDescription =
+                                                            cuisine[
+                                                                cuisineName
+                                                            ];
+
+                                                        return (
+                                                            <PointOfInterestCard
+                                                                key={index}
+                                                                image={image}
+                                                                name={
+                                                                    destination
+                                                                        .landmarksCuisine[
+                                                                        index
+                                                                    ]
+                                                                }
+                                                                index={index}
+                                                                onClick={() => {
+                                                                    handleImageClick(
+                                                                        timeStampsCuisine[
+                                                                            index
+                                                                        ]
+                                                                    );
+                                                                    if (
+                                                                        activeParagraphFood ===
+                                                                        cuisineDescription
+                                                                    ) {
+                                                                        setActiveParagraphFood(
+                                                                            null
+                                                                        );
+                                                                    } else {
+                                                                        setActiveParagraphFood(
+                                                                            cuisineDescription
+                                                                        );
+                                                                    }
+                                                                }}
+                                                                highlightFoodCard={
+                                                                    highlightFoodCard
+                                                                }
+                                                            />
+                                                        );
+                                                    }
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
-                        {/* <motion.div
-                            initial={{ opacity: 0, y: 50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-semibold mb-4 mt-8">
-                                Interactive Map
-                            </h2>
-                            <OpenStreetMap destination={destination} />
-                            {weatherData && (
-                                <div className="mb-4">
-                                    <h2 className="text-2xl font-semibold mb-4">
-                                        Current Weather
-                                    </h2>
-                                    <p className="capitalize">
-                                        {weatherData.weather[0].description} -{" "}
-                                        {Math.round(weatherData.main.temp)}°C
+                        {activeTab === "Food" &&
+                            activeParagraphFood !== null && (
+                                <div
+                                    className="w-full"
+                                    style={{
+                                        maxHeight: "144px",
+                                        overflowY: "auto",
+                                    }}
+                                >
+                                    <p className="text-lg mt-8">
+                                        {activeParagraphFood}
                                     </p>
                                 </div>
                             )}
-                        </motion.div>
+                        {activeTab === "History" && (
+                            <div className="md:grid md:grid-cols-2 md:gap-8 gap-4 grid-cols-1">
+                                <div>
+                                    {activeImage === null ? (
+                                        <div
+                                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 md:mb-0 mb-4"
+                                            style={{
+                                                maxHeight: "548px",
+                                                overflowY: "auto",
+                                                // scrollbarWidth: "none",
+                                            }}
+                                        >
+                                            {destination.imagesHistory.map(
+                                                (image, index) => {
+                                                    const historyName =
+                                                        Object.keys(history)[
+                                                            index
+                                                        ];
+                                                    const historyDescription =
+                                                        history[historyName];
 
-                        <h2 className="text-2xl font-semibold mb-4">
-                            Categories
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4 ">
-                            <CategoryCard
-                                title="Culture"
-                                items={culture}
-                                onItemClick={handleItemClick}
-                                activeItemKey={activeItemKey}
-                            />
-                            <CategoryCard
-                                title="Cuisine"
-                                items={cuisine}
-                                onItemClick={handleItemClick}
-                                activeItemKey={activeItemKey}
-                            />
-                            <CategoryCard
-                                title="History"
-                                items={history}
-                                onItemClick={handleItemClick}
-                                activeItemKey={activeItemKey}
-                            />
-                        </div>
-                        {activeItemKey && (
-                            <div className="border rounded-md p-4">
-                                <h3 className="text-2xl font-semibold mb-2">
-                                    {activeItemKey}
-                                </h3>
-                                <div className="text-xl">{activeItemValue}</div>
+                                                    return (
+                                                        <PointOfInterestCard
+                                                            key={index}
+                                                            image={image}
+                                                            name={
+                                                                destination
+                                                                    .landmarksHistory[
+                                                                    index
+                                                                ]
+                                                            }
+                                                            index={index}
+                                                            onClick={() => {
+                                                                if (
+                                                                    activeImage !==
+                                                                        null &&
+                                                                    activeImage.index ===
+                                                                        index
+                                                                ) {
+                                                                    setActiveImage(
+                                                                        null
+                                                                    );
+                                                                } else {
+                                                                    setActiveImage(
+                                                                        {
+                                                                            image,
+                                                                            name: destination
+                                                                                .landmarksHistory[
+                                                                                index
+                                                                            ],
+                                                                            description:
+                                                                                historyDescription,
+                                                                            index,
+                                                                        }
+                                                                    );
+                                                                }
+                                                            }}
+                                                        />
+                                                    );
+                                                }
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="w-full h-full flex justify-center items-center mb-4">
+                                            <img
+                                                src={"/" + activeImage.image}
+                                                alt={activeImage.name}
+                                                className="w-full h-full object-cover"
+                                                onClick={() =>
+                                                    setActiveImage(null)
+                                                }
+                                                height={548}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                                <div>
+                                    {activeImage !== null ? (
+                                        <div
+                                            className="w-full"
+                                            style={{
+                                                maxHeight: "548px",
+                                                overflowY: "auto",
+                                            }}
+                                        >
+                                            <h1
+                                                className="text-6xl mb-4 font-bold"
+                                                style={{
+                                                    letterSpacing: "0.025rem",
+                                                }}
+                                            >
+                                                {activeImage.name}
+                                            </h1>
+                                            <p className="text-lg mb-16">
+                                                {activeImage.description}
+                                            </p>
+                                            <button
+                                                onClick={() =>
+                                                    setActiveImage(null)
+                                                }
+                                                // className="mr-2 px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                                                className="px-4 py-2 font-bold hover:text-blue-500"
+                                            >
+                                                ←&nbsp;&nbsp; Go Back
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="w-full">
+                                            <p className="text-lg">
+                                                Click on the images to learn
+                                                more about the history of the
+                                                city.
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        )} */}
+                        )}
+
+                        {activeTab === "About" && (
+                            <div className="flex flex-col lg:flex-row">
+                                <div className="lg:w-1/4 pr-4 w-full mb-4 lg:mb-0  lg:text-left">
+                                    <p className="text-3xl font-bold mb-4 text-center sm:text-left">
+                                        Table of Contents
+                                    </p>
+                                    <ul className="list-decimal list-inside">
+                                        {Object.entries(tableOfContents).map(
+                                            ([section, content], index) => {
+                                                return (
+                                                    <React.Fragment key={index}>
+                                                        <li
+                                                            className={`mb-2 hover:text-neutral-500 text-lg  ${
+                                                                activeSection ===
+                                                                section
+                                                                    ? "text-blue-500 underline"
+                                                                    : ""
+                                                            } `}
+                                                        >
+                                                            <button
+                                                                className={`text-left hover:text-neutral-500  ${
+                                                                    activeSection ===
+                                                                    section
+                                                                        ? "text-blue-500 underline"
+                                                                        : ""
+                                                                } `}
+                                                                onClick={() => {
+                                                                    setCurrentPage(
+                                                                        content.page
+                                                                    );
+                                                                    setActiveSection(
+                                                                        section
+                                                                    );
+                                                                    setActiveSubsection(
+                                                                        null
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {section}
+                                                            </button>
+                                                        </li>
+                                                        {content.subsections &&
+                                                            Object.entries(
+                                                                content.subsections
+                                                            ).map(
+                                                                (
+                                                                    [
+                                                                        subsection,
+                                                                        pageInfo,
+                                                                    ],
+                                                                    subIndex
+                                                                ) => (
+                                                                    <li
+                                                                        key={
+                                                                            subIndex
+                                                                        }
+                                                                        className={`mb-2 pl-4 hover:text-neutral-500 text-lg  ${
+                                                                            activeSubsection ===
+                                                                            subsection
+                                                                                ? "text-blue-500 underline"
+                                                                                : ""
+                                                                        } `}
+                                                                    >
+                                                                        <button
+                                                                            className={`text-left hover:text-neutral-500  ${
+                                                                                activeSubsection ===
+                                                                                subsection
+                                                                                    ? "text-blue-500 underline"
+                                                                                    : ""
+                                                                            } `}
+                                                                            onClick={() => {
+                                                                                setCurrentPage(
+                                                                                    pageInfo.page
+                                                                                );
+                                                                                setActiveSection(
+                                                                                    null
+                                                                                );
+                                                                                setActiveSubsection(
+                                                                                    subsection
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                subsection
+                                                                            }
+                                                                        </button>
+                                                                    </li>
+                                                                )
+                                                            )}
+                                                    </React.Fragment>
+                                                );
+                                            }
+                                        )}
+                                    </ul>
+                                </div>
+                                <div className="lg:w-3/4 w-full relative">
+                                    <ReactResizeDetector handleWidth>
+                                        {({ width }) => {
+                                            // Change the scale according to your needs
+                                            const scale = width
+                                                ? (1.188 * width) / 1000
+                                                : 1;
+
+                                            return (
+                                                <div>
+                                                    <Document
+                                                        file="/guide.pdf"
+                                                        onLoadSuccess={({
+                                                            numPages,
+                                                        }) =>
+                                                            setNumPages(
+                                                                numPages
+                                                            )
+                                                        }
+                                                    >
+                                                        <Page
+                                                            pageNumber={
+                                                                currentPage
+                                                            }
+                                                            scale={scale}
+                                                            // height={548}
+                                                            // set the canvasBackground prop according to dark or light mode
+                                                            canvasBackground={
+                                                                darkMode
+                                                                    ? "#f5f5f5"
+                                                                    : "#f5f5f5"
+                                                            }
+                                                            loading="Loading..."
+                                                            renderTextLayer={
+                                                                false
+                                                            }
+                                                            renderAnnotationLayer={
+                                                                false
+                                                            }
+                                                        />
+                                                    </Document>
+                                                    <div className="flex justify-between mt-4 items-center">
+                                                        <div>
+                                                            <p>
+                                                                Page{" "}
+                                                                {currentPage} of{" "}
+                                                                {numPages}
+                                                            </p>
+                                                        </div>
+                                                        <div className="absolute left-1/2 transform -translate-x-1/2">
+                                                            <button
+                                                                onClick={
+                                                                    previousPage
+                                                                }
+                                                                disabled={
+                                                                    currentPage ===
+                                                                    1
+                                                                }
+                                                                className="px-4 py-2 px-4 py-2 font-bold rounded hover:text-blue-500"
+                                                            >
+                                                                ←
+                                                            </button>
+                                                            <button
+                                                                onClick={
+                                                                    nextPage
+                                                                }
+                                                                disabled={
+                                                                    currentPage ===
+                                                                    numPages
+                                                                }
+                                                                className="px-4 py-2 px-4 py-2 font-bold rounded hover:text-blue-500"
+                                                            >
+                                                                →
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }}
+                                    </ReactResizeDetector>
+                                </div>
+                            </div>
+                        )}
+
                         <section className="mt-8">
                             <Link href="/">
                                 <button
-                                    className={`border rounded-md p-4 hover transition duration-200 ease-in-out ${
+                                    type="button"
+                                    className={`rounded-md py-2 px-4 transition ease-in duration-200 text-center text-base font-regular ${
                                         darkMode
-                                            ? "bg-neutral-800 text-neutral-100 hover:bg-neutral-700"
-                                            : "bg-neutral-100 text-neutral-900 hover:bg-neutral-200"
+                                            ? "bg-neutral-800 text-neutral-100 hover:bg-neutral-700  focus:ring-2 focus:ring-offset-2 border border-neutral-100 shadow-md shadow-neutral-800"
+                                            : "bg-neutral-100 text-neutral-900 hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 border border-neutral-900 shadow-md shadow-neutral-400"
                                     }`}
                                 >
                                     Back to Home
                                 </button>
                             </Link>
                         </section>
-                    </div>
-                    <footer
-                        className={`bg-gradient-to-r from-blue-500 to-purple-600 text-white py-6 ${
-                            darkMode ? "dark:bg-slate-800" : ""
-                        }`}
-                    >
-                        <div className="container mx-auto px-4">
-                            <p className="text-center text-xl">
-                                &copy; VoyageVR {new Date().getFullYear()}
-                            </p>
-                        </div>
-                    </footer>
+                    </main>
+                    {/* <footer
+                            className={`bg-gradient-to-r from-blue-500 to-purple-600 text-white py-6 ${
+                                darkMode ? "dark:bg-slate-800" : ""
+                            }`}
+                        >
+                            <div className="container mx-auto px-4">
+                                <p className="text-center text-xl">
+                                    &copy; VoyageVR {new Date().getFullYear()}
+                                </p>
+                            </div>
+                        </footer> */}
                 </div>
             </div>
         </>
