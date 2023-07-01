@@ -3,9 +3,6 @@ import { useState, useEffect } from "react";
 import DestinationCard from "../components/DestinationCard";
 import destinations from "../data/destinations";
 import { motion } from "framer-motion";
-import { AiOutlineMenu } from "react-icons/ai";
-import { RiCloseFill } from "react-icons/ri";
-import Link from "next/link";
 
 export default function Home() {
     const [destinationList, setDestinationList] = useState([]);
