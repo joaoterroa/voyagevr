@@ -93,10 +93,6 @@ export default function DestinationPage() {
     useEffect(() => {
         const handleResize = () => {
             const windowWidth = 1.57 * window.innerWidth;
-
-            // Calculate new scale here. This is a very simple example,
-            // you may need a more complex calculation based on your needs.
-            // In this example, the larger the window, the larger the scale.
             const newScale = windowWidth / 2000;
 
             setScale(newScale);
@@ -135,7 +131,6 @@ export default function DestinationPage() {
         localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
     };
 
-    // Add this function inside the DestinationPage component
     const handleImageClick = (timestamp) => {
         setCurrentTime(timestamp);
     };
@@ -143,15 +138,15 @@ export default function DestinationPage() {
     const [activeItemKey, setActiveItemKey] = useState(null);
     const [activeItemValue, setActiveItemValue] = useState(null);
 
-    // const handleItemClick = (key, value) => {
-    //     if (activeItemKey === key) {
-    //         setActiveItemKey(null);
-    //         setActiveItemValue(null);
-    //     } else {
-    //         setActiveItemKey(key);
-    //         setActiveItemValue(value);
-    //     }
-    // };
+    const handleItemClick = (key, value) => {
+        if (activeItemKey === key) {
+            setActiveItemKey(null);
+            setActiveItemValue(null);
+        } else {
+            setActiveItemKey(key);
+            setActiveItemValue(value);
+        }
+    };
 
     // Function to navigate to the next page
     const nextPage = () => {
@@ -216,7 +211,7 @@ export default function DestinationPage() {
     //     }
     // }, [destination]);
 
-    // const [currentUrl, setCurrentUrl] = useState("");
+    const [currentUrl, setCurrentUrl] = useState("");
 
     useEffect(() => {
         if (typeof window !== "undefined") {
