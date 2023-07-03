@@ -3,21 +3,19 @@ import destinations from "../../data/destinations";
 import Link from "next/link";
 import VideoPlayer from "@/components/VideoPlayer";
 // import CategoryCard from "@/components/CategoryCard";
-import Image from "next/image";
 import Head from "next/head";
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import PointOfInterestCard from "@/components/PointOfInterestCard";
 import styles from "@/styles/DestinationPage.module.css";
-import { fetchWeatherData } from "../utils";
+// import { fetchWeatherData } from "../utils";
 import { Document, Page, pdfjs } from "react-pdf";
 import React from "react";
 import ReactResizeDetector from "react-resize-detector";
 
-const OpenStreetMap = dynamic(() => import("@/components/OpenStreetMap"), {
-    ssr: false,
-});
+// const OpenStreetMap = dynamic(() => import("@/components/OpenStreetMap"), {
+//     ssr: false,
+// });
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -145,15 +143,15 @@ export default function DestinationPage() {
     const [activeItemKey, setActiveItemKey] = useState(null);
     const [activeItemValue, setActiveItemValue] = useState(null);
 
-    const handleItemClick = (key, value) => {
-        if (activeItemKey === key) {
-            setActiveItemKey(null);
-            setActiveItemValue(null);
-        } else {
-            setActiveItemKey(key);
-            setActiveItemValue(value);
-        }
-    };
+    // const handleItemClick = (key, value) => {
+    //     if (activeItemKey === key) {
+    //         setActiveItemKey(null);
+    //         setActiveItemValue(null);
+    //     } else {
+    //         setActiveItemKey(key);
+    //         setActiveItemValue(value);
+    //     }
+    // };
 
     // Function to navigate to the next page
     const nextPage = () => {
@@ -169,7 +167,7 @@ export default function DestinationPage() {
         }
     };
 
-    const [weatherData, setWeatherData] = useState(null);
+    // const [weatherData, setWeatherData] = useState(null);
     const [highlightMonCard, setHighlightMonCard] = useState(null);
     const [highlightFoodCard, setHighlightFoodCard] = useState(null);
 
@@ -201,24 +199,24 @@ export default function DestinationPage() {
         }
     };
 
-    useEffect(() => {
-        // Fetch weather data when the component mounts
-        const fetchWeather = async () => {
-            const apiKey = "c294eea6e8141a841129bd80c9a12710";
-            const data = await fetchWeatherData(
-                destination.latitude,
-                destination.longitude,
-                apiKey
-            );
-            setWeatherData(data);
-        };
+    // useEffect(() => {
+    //     // Fetch weather data when the component mounts
+    //     const fetchWeather = async () => {
+    //         const apiKey = "";
+    //         const data = await fetchWeatherData(
+    //             destination.latitude,
+    //             destination.longitude,
+    //             apiKey
+    //         );
+    //         setWeatherData(data);
+    //     };
 
-        if (destination) {
-            fetchWeather();
-        }
-    }, [destination]);
+    //     if (destination) {
+    //         fetchWeather();
+    //     }
+    // }, [destination]);
 
-    const [currentUrl, setCurrentUrl] = useState("");
+    // const [currentUrl, setCurrentUrl] = useState("");
 
     useEffect(() => {
         if (typeof window !== "undefined") {
