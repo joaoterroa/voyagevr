@@ -175,23 +175,27 @@ export default function DestinationPage() {
 
     const updateCard = (timestamp) => {
         // Monuments
-        if (timestamp >= 80 && timestamp < 93) {
+        if (timestamp >= 46 && timestamp < 96) {
             setHighlightMonCard(0);
-        } else if (timestamp >= 195 && timestamp < 217) {
+        } else if (timestamp >= 97 && timestamp < 157) {
             setHighlightMonCard(1);
-        } else if (timestamp >= 720 && timestamp < 772) {
+        } else if (timestamp >= 158 && timestamp < 186) {
             setHighlightMonCard(2);
+        } else if (timestamp >= 187 && timestamp < 215) {
+            setHighlightMonCard(3);
         } else {
             setHighlightMonCard(null);
         }
 
         // Food
-        if (timestamp >= 252 && timestamp < 267) {
+        if (timestamp >= 246 && timestamp < 287) {
             setHighlightFoodCard(0);
-        } else if (timestamp >= 720 && timestamp < 772) {
+        } else if (timestamp >= 288 && timestamp < 325) {
             setHighlightFoodCard(1);
-        } else if (timestamp >= 180 && timestamp < 195) {
+        } else if (timestamp >= 326 && timestamp < 362) {
             setHighlightFoodCard(2);
+        } else if (timestamp >= 363 && timestamp < 398) {
+            setHighlightFoodCard(3);
         } else {
             setHighlightFoodCard(null);
         }
@@ -226,8 +230,14 @@ export default function DestinationPage() {
         return <div>Loading...</div>;
     }
 
-    const { landmarks, culture, cuisine, history, nearbyAttractions } =
-        destination;
+    const {
+        landmarks,
+        culture,
+        cuisine,
+        history,
+        nearbyAttractions,
+        intervals,
+    } = destination;
 
     const timeStamps = destination.timeStamps;
 

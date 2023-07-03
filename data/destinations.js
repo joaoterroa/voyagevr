@@ -7,19 +7,27 @@ const destinations = [
         longitude: -9.1393366,
         image: "images/lisbon.jpg",
         video: "videos/lisbon.webm",
-        introductoryVideo: "N8bHCHl8X_0",
-        timeStamps: [80, 195, 720],
-        timeStampsCuisine: [252, 720, 180],
-        intervals: { 1: [80, 90] },
+        introductoryVideo: "ojBoV6GoXks",
+        timeStamps: [46, 97, 158, 187],
+        timeStampsCuisine: [246, 288, 326, 363],
+        intervals: { 0: [46, 96], 1: [97, 157], 2: [158, 186], 3: [187, 215] },
+        intervalsCuisine: {
+            0: [246, 287],
+            1: [288, 325],
+            2: [326, 362],
+            3: [363, 398],
+        },
         images: [
             "images/lisbon/torre_belem.jpg",
-            "images/lisbon/maat.jpg",
+            "images/lisbon/mosteiro2.jpg",
             "images/lisbon/sintra.jpg",
+            "images/lisbon/padrao.jpg",
         ],
         imagesCuisine: [
-            "images/lisbon/bras.jpg",
-            "images/lisbon/travess.webp",
             "images/lisbon/nata.jpg",
+            "images/lisbon/bras.jpg",
+            "images/lisbon/sardinha.jpg",
+            "images/lisbon/patanisca.jpg",
         ],
         imagesHistory: [
             "images/lisbon/port.jpg",
@@ -31,11 +39,17 @@ const destinations = [
             "images/lisbon/ec.jpg",
             "images/lisbon/sec21.jpg",
         ],
-        landmarks: ["Torre de Belém", "MAAT", "Sintra"],
+        landmarks: [
+            "Torre de Belém",
+            "Mosteiro dos Jerónimos",
+            "Palácio da Pena",
+            "Padrão dos Descobrimentos",
+        ],
         landmarksCuisine: [
+            "Pastéis de Belém",
             "Bacalhau à Brás",
-            "Travesseiro de Sintra",
-            "Pastel de Nata",
+            "Sardinhas Assadas",
+            "Pataniscas",
         ],
         annotations: [(500, 500), (500, 500), (500, 500)],
         landmarksHistory: [
@@ -74,12 +88,14 @@ const destinations = [
                 "Portugal has a long history of winemaking, dating back to the ancient Romans, and boasts a wide variety of wine styles and regions. The country is perhaps best known for its Port wine, a sweet, fortified wine produced in the Douro Valley. However, Portugal's diverse climate and geography allow for the cultivation of numerous grape varieties, resulting in an array of wines that cater to different tastes. Some other notable wine styles include Vinho Verde, a crisp and refreshing young wine from the Minho region, and Madeira, a fortified wine from the Madeira Islands with a unique oxidative aging process.",
         },
         cuisine: {
-            "Bacalhau À Brás":
+            "Pastéis de Belém":
+                "Indeed the archetypal Portuguese pastry is the Pastel de Nata - a custard tart with hints of cinnamon and vanilla, which you can find in, we'll risk saying: every Pastelaria in the country! But Lisbonites believe that this sacred Portuguese pastry is found in its most heavenly form at the Antiga Confeitaria de Belem, more commonly known as the Pastéis de Belém. The first recipe for pastel de Belém dates back to 1837 when it was produced by the monks of the Jerónimos monastery. Only the custard tarts produced at the Fábrica Pastéis de Belém can be called pastel de Belém, while all the others, produced by other patisseries in Lisbon are called pastel de nata. Regardless of the name, these tarts can be served hot or cold and in 2009, The Guardian listed pastel de Belém as one of the 50 'best things to eat' in the world.",
+            "Bacalhau à Brás":
                 'Bacalhau, or salted cod, is a staple ingredient in Portuguese cuisine and has earned the nickname "the faithful friend" due to its prevalence in the country\'s culinary traditions. With a history that dates back to the Age of Discovery, bacalhau was an essential food source for Portuguese sailors who needed preserved provisions during long sea voyages. Today, it is said that there are 365 ways to prepare bacalhau – one for each day of the year – with dishes ranging from simple grilled preparations to elaborate layered casseroles. A classic Portuguese recipe, Bacalhau À brás mixes salt cod, potatoes, and eggs into a creamy dish topped with olives and parsley. It’s a favorite of old Portugal.',
-            "Travesseiro de Sintra":
-                "The Travesseiros de Sintra are one of the most sought after sweets in Sintra, by both locals and tourists alike. Travesseiros are made with puff pastry, egg yolks, almonds and sugar, and are universally recognised as one of Sintra's greatest delicacies. One can really not explain in words how delicious they are or their unique feel, but you really do have to taste one to understand. Piriquita, a pastry shop in Sintra, has the absolute best ones.",
-            "Pastel de Nata":
-                "Indeed the archetypal Portuguese pastry is the Pastel de Nata - a custard tart with hints of cinnamon and vanilla, which you can find in, we'll risk saying: every Pastelaria in the country! But Lisbonites believe that this sacred Portuguese pastry is found in its most heavenly form at the Antiga Confeitaria de Belem, more commonly known as the Pastéis de Belém.",
+            "Sardinhas Assadas":
+                "A staple restaurant dish and a common sight at various summer festivals, grilled sardines are a simple, traditional Portuguese dish. They are usually grilled whole, merely seasoned with salt and olive oil. Although they are commonly accompanied by bread, they are also sided with boiled potatoes, sautéed vegetables, or salads, and are often garnished with fresh cilantro and a drizzle of olive oil.",
+            Pataniscas:
+                "Pataniscas (Salt Cod Fish Fritters) is a delicious typical Portuguese petisco made from a mixture of cod with a dough that contains flour, egg, chopped parsley, onions, and salt. It can be served as a starter or as a main course (usually with a side dish of brown bean rice or tomato rice). It is absolutely mouthwatering either way, we have to admit. Even though super traditional, it is very simple and easy to prepare the dish, so it is part of the menu all year round. We will easily take them to picnics and family trips as a snack as well. But even more important: Pataniscas is one of the items that can’t be missed on a proper Portuguese Christmas table.",
         },
         // history: {
         //     "Portuguese Empire":
